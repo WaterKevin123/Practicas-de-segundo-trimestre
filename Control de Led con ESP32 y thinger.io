@@ -1,12 +1,12 @@
 #include <WiFi.h>
 #include <ThingerESP32.h>
 /* ========= THINGER.IO ========= */
-#define USERNAME "gphurtado"
-#define DEVICE_ID "esp32_led"
-#define DEVICE_CREDENTIAL "123456"
+#define USERNAME "Kevin_Sacanecla"
+#define DEVICE_ID "Kevin_Sacancela"
+#define DEVICE_CREDENTIAL "Sacancela5"
 /* ========= WIFI ========= */
-#define SSID "CELERITY GALITO HC"
-#define SSID_PASSWORD "TU_CLAVE_WIFI" // Reemplaza por tu clave
+#define SSID "MECATRONICA_3ABC"
+#define SSID_PASSWORD "MEC2025@." // Reemplaza por tu clave
 /* ========= LED ========= */
 #define LED_PIN 2 // LED interno del ESP32 (GPIO2)
 ThingerESP32 thing(USERNAME, DEVICE_ID, DEVICE_CREDENTIAL);
