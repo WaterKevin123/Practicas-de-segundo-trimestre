@@ -1,0 +1,119 @@
+<div id="box">
+      <div id="status-light"></div>
+        <h2>Nivel de Proximidad</h2>
+
+          <div id="bars">
+              <div class="bar"></div>
+                  <div class="bar"></div>
+                      <div class="bar"></div>
+                          <div class="bar"></div>
+                              <div class="bar"></div>
+                                  <div class="bar"></div>
+                                    </div>
+
+                                      <p id="txt">---</p>
+                                        <p id="alert-msg">ESPERANDO DATOS</p>
+                                        </div>
+
+                                        <span id="data" style="display:none">{{value}}</span>
+
+                                        <script>
+                                        setInterval(() => {
+                                          const dataEl = document.getElementById("data");
+                                            const txtEl = document.getElementById("txt");
+                                              const msgEl = document.getElementById("alert-msg");
+                                                const light = document.getElementById("status-light");
+                                                  
+                                                    let d = parseFloat(dataEl.innerText);
+                                                      if (isNaN(d)) return;
+
+                                                        txtEl.innerText = d.toFixed(1) + " cm";
+
+                                                          let color = "";
+                                                            let mensaje = "";
+                                                              let activeBars = 0;
+
+                                                                // Lógica de semáforo solicitada
+                                                                  if (d <= 5) {
+                                                                      color = "#ef4444"; // Rojo
+                                                                          mensaje = "¡ALTO! MUY CERCA";
+                                                                              activeBars = 6;
+                                                                                } else if (d <= 10) {
+                                                                                    color = "#eab308"; // Amarillo
+                                                                                        mensaje = "PRECAUCIÓN";
+                                                                                            activeBars = 4;
+                                                                                              } else {
+                                                                                                  color = "#22c55e"; // Verde
+                                                                                                      mensaje = "DISTANCIA SEGURA";
+                                                                                                          // Si está entre 10 y 100, mostrar barras proporcionales
+                                                                                                              activeBars = Math.max(1, Math.round((1 - (d-10) / 90) * 3)); 
+                                                                                                                }
+
+                                                                                                                  // Aplicar cambios visuales
+                                                                                                                    light.style.background = color;
+                                                                                                                      light.style.boxShadow = `0 0 20px ${color}`;
+                                                                                                                        msgEl.innerText = mensaje;
+                                                                                                                          msgEl.style.color = color;
+
+                                                                                                                            document.querySelectorAll(".bar").forEach((bar, i) => {
+                                                                                                                                if (i < activeBars) {
+                                                                                                                                      bar.style.background = color;
+                                                                                                                                            bar.style.opacity = "1";
+                                                                                                                                                } else {
+                                                                                                                                                      bar.style.background = "#334155";
+                                                                                                                                                            bar.style.opacity = "0.2";
+                                                                                                                                                                }
+                                                                                                                                                                  });
+                                                                                                                                                                  }, 200);
+                                                                                                                                                                  </script>
+
+                                                                                                                                                                  <style>
+                                                                                                                                                                  #box {
+                                                                                                                                                                    background: #0f172a;
+                                                                                                                                                                      color: white;
+                                                                                                                                                                        padding: 30px;
+                                                                                                                                                                          border-radius: 20px;
+                                                                                                                                                                            text-align: center;
+                                                                                                                                                                              font-family: sans-serif;
+                                                                                                                                                                                width: 250px;
+                                                                                                                                                                                  border: 2px solid #1e293b;
+                                                                                                                                                                                  }
+
+                                                                                                                                                                                  #status-light {
+                                                                                                                                                                                    width: 50px;
+                                                                                                                                                                                      height: 50px;
+                                                                                                                                                                                        border-radius: 50%;
+                                                                                                                                                                                          margin: 0 auto 15px;
+                                                                                                                                                                                            background: #334155;
+                                                                                                                                                                                              transition: 0.3s;
+                                                                                                                                                                                              }
+
+                                                                                                                                                                                              h2 { font-size: 14px; text-transform: uppercase; color: #94a3b8; margin-bottom: 20px; }
+
+                                                                                                                                                                                              #bars {
+                                                                                                                                                                                                display: flex;
+                                                                                                                                                                                                  justify-content: center;
+                                                                                                                                                                                                    gap: 5px;
+                                                                                                                                                                                                      margin-bottom: 15px;
+                                                                                                                                                                                                      }
+
+                                                                                                                                                                                                      .bar {
+                                                                                                                                                                                                        width: 15px;
+                                                                                                                                                                                                          height: 40px;
+                                                                                                                                                                                                            background: #334155;
+                                                                                                                                                                                                              border-radius: 3px;
+                                                                                                                                                                                                                transition: 0.2s;
+                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                #txt {
+                                                                                                                                                                                                                  font-size: 32px;
+                                                                                                                                                                                                                    font-weight: bold;
+                                                                                                                                                                                                                      margin: 5px 0;
+                                                                                                                                                                                                                      }
+
+                                                                                                                                                                                                                      #alert-msg {
+                                                                                                                                                                                                                        font-size: 12px;
+                                                                                                                                                                                                                          font-weight: bold;
+                                                                                                                                                                                                                            letter-spacing: 1px;
+                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                            </style>
