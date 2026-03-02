@@ -1,0 +1,109 @@
+import network
+import socket
+from machine import Pin
+import time
+import sys
+
+# ======== CONFIGURAR WIFI ========
+ssid = "TU_SSID"
+password = "TU_PASSWORD"
+
+# ======== CONFIGURAR RELES ========
+rele1 = Pin(26, Pin.OUT)
+rele2 = Pin(27, Pin.OUT)
+
+# Relés activos en LOW (común)
+rele1.value(1)  # apagado
+rele2.value(1)  # apagado
+
+# ======== CONEXION WIFI SEGURA ========
+wifi = network.WLAN(network.STA_IF)
+
+# Reinicio completo del WiFi
+wifi.active(False)
+time.sleep(1)
+wifi.active(True)
+
+print("Conectando a WiFi...")
+
+wifi.connect(ssid, password)
+
+timeout = 15
+start_time = time.time()
+
+while not wifi.isconnected():
+    if time.time() - start_time > timeout:
+        print("No se pudo conectar al WiFi")
+        sys.exit()
+    time.sleep(0.5)
+    print(".", end="")
+
+print("\nConectado correctamente")
+print("IP:", wifi.ifconfig()[0])
+
+# ======== CREAR SERVIDOR ========
+addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
+server = socket.socket()
+server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+server.bind(addr)
+server.listen(1)
+
+print("Servidor web activo en puerto 80")
+
+# ======== FUNCION PAGINA WEB ========
+def web_page():
+    estado1 = "ENCENDIDO" if rele1.value() == 0 else "APAGADO"
+    estado2 = "ENCENDIDO" if rele2.value() == 0 else "APAGADO"
+
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {{ font-family: Arial; text-align: center; }}
+button {{ padding: 15px; font-size: 18px; margin: 10px; }}
+</style>
+</head>
+<body>
+<h2>Servidor Web ESP32</h2>
+
+<p>Foco 1: {estado1}</p>
+<a href="/rele1/on"><button>Encender</button></a>
+<a href="/rele1/off"><button>Apagar</button></a>
+
+<p>Foco 2: {estado2}</p>
+<a href="/rele2/on"><button>Encender</button></a>
+<a href="/rele2/off"><button>Apagar</button></a>
+
+</body>
+</html>
+"""
+    return html
+
+# ======== LOOP PRINCIPAL ========
+while True:
+    try:
+        conn, addr = server.accept()
+        request = conn.recv(1024).decode()
+
+        # CONTROL DE RELES
+        if "/rele1/on" in request:
+            rele1.value(0)
+        if "/rele1/off" in request:
+            rele1.value(1)
+        if "/rele2/on" in request:
+            rele2.value(0)
+        if "/rele2/off" in request:
+            rele2.value(1)
+
+        response = web_page()
+
+        conn.send("HTTP/1.1 200 OK\r\n")
+        conn.send("Content-Type: text/html\r\n")
+        conn.send("Connection: close\r\n\r\n")
+        conn.sendall(response)
+        conn.close()
+
+    except Exception as e:
+        print("Error:", e)
+        conn.close()
