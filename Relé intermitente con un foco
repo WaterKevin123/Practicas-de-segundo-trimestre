@@ -1,0 +1,30 @@
+#define RELE 23      // Pin donde conectaste el IN del relé
+#define LED 2        // LED interno del ESP32
+
+int veces = 20;      
+int contador = 0;    
+
+void setup() {
+  pinMode(RELE, OUTPUT);
+  pinMode(LED, OUTPUT);
+
+  digitalWrite(RELE, HIGH); // Relé apagado (relé activo en LOW)
+  digitalWrite(LED, LOW);   
+}
+
+void loop() {
+
+  if(contador < veces){
+
+    digitalWrite(RELE, LOW);   // PRENDE FOCO
+    digitalWrite(LED, HIGH);   
+    delay(1000);
+
+    digitalWrite(RELE, HIGH);  // APAGA FOCO
+    digitalWrite(LED, LOW);    
+    delay(1000);
+
+    contador++;
+  }
+
+}
